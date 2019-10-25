@@ -7,7 +7,7 @@ It offers, basically, the same funcionalities of other popular libraries, such a
 [cmdline](https://github.com/tanakh/cmdline) and
 [argparse](https://github.com/hbristow/argparse),
 but relies on the powerful `if  constexpr` construct of C++17 instead of dynamic casting.
-This results in a very compact code (~150 sloc).
+This results in a very compact code (~140 sloc).
 
 ### Integration
 
@@ -79,3 +79,21 @@ To compile and run the example, do as follows.
 	$ ./example
 
 Also run `./test_parse` for some testing.
+
+
+### Interface
+
+```C++
+    parser(int argc, char** argv);                   // constructor
+
+    bool parse();                                    // parse command line; return false on failure
+
+    void help() const;                               // print help message
+
+    bool add(std::string const& name,                // add argument (if shorthand is *not* empty, 
+             std::string const& descr,               // then the argument is intended to be optional);
+             std::string const& shorthand = empty);  // return false if an argument with the same name already exists
+
+    template <typename T>
+    T get(std::string const& name) const;            // get a variable of type T by name
+```
