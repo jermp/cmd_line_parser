@@ -84,7 +84,9 @@ struct parser {
 
     bool add(std::string const& name, std::string const& descr, std::string const& shorthand,
              bool is_boolean = true) {
-        bool ret = m_cmds.emplace(name, cmd{shorthand, "false", descr, is_boolean}).second;
+        bool ret =
+            m_cmds.emplace(name, cmd{shorthand, is_boolean ? "false" : empty, descr, is_boolean})
+                .second;
         if (ret) {
             m_names.push_back(name);
             m_shorthands.emplace(shorthand, m_names.size() - 1);
