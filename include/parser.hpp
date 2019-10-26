@@ -42,12 +42,16 @@ struct parser {
             auto const& name = m_names[id];
             auto& c = m_cmds[name];
             if (is_optional) {
-                c.value = c.is_boolean ? "true" : m_argv[++i];
-            } else {
-                c.value = parsed;
+                if (c.is_boolean) {
+                    parsed = "true";
+                } else {
+                    ++i;
+                    if (i == m_argc) return abort();
+                    parsed = m_argv[i];
+                }
             }
+            c.value = parsed;
         }
-
         return true;
     }
 
