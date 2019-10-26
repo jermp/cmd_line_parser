@@ -7,7 +7,7 @@ It offers, basically, the same funcionalities as other popular libraries, such a
 [cmdline](https://github.com/tanakh/cmdline) and
 [argparse](https://github.com/hbristow/argparse),
 but relies on the powerful `if  constexpr` construct of C++17 instead of dynamic casting.
-This results in a very compact code (~140 sloc).
+This results in a very compact code (~150 sloc).
 
 ### Integration
 
@@ -26,7 +26,7 @@ Or if you use git:
 
 void configure(cmd_line_parser::parser& parser) {
     // for the following two arguments, we do not specify any shorthand,
-    // thus they will be considered as *required* arguments
+    // thus they will be *required* arguments
     parser.add("perc",                // name
                "A percentage value."  // description
     );
@@ -35,9 +35,18 @@ void configure(cmd_line_parser::parser& parser) {
     // here, we specify some shorthand for *optional* arguments
     parser.add("output_filename",       // name
                "An output file name.",  // description
-               "-o"                     // shorthand
+               "-o",                    // shorthand
+               false                    // not boolean option: expected a value after the shorthand
     );
-    parser.add("num_trials", "Number of trials.", "-n");
+    parser.add("num_trials", "Number of trials.", "-n", false);
+
+    parser.add("sorted", "Sort output.", "--sort",
+               true  // boolean option: a value is not expected after the shorthand
+    );
+    parser.add("buffered", "Buffer input.", "--buffer"
+               // the option is considered boolean by default if we do not
+               // specify anything
+    );
 }
 
 int main(int argc, char** argv) {
@@ -54,9 +63,13 @@ int main(int argc, char** argv) {
     auto perc = parser.get<float>("perc");  // deduced type is float
     auto input_filename =                   // deduced type is std::string
         parser.get<std::string>("input_filename");
+    auto sorted_output = parser.get<bool>("sorted");     // deduced type is bool
+    auto buffered_input = parser.get<bool>("buffered");  // deduced type is bool
 
     std::cout << "perc: " << perc << std::endl;
     std::cout << "input_filename: " << input_filename << std::endl;
+    std::cout << "sorted_output: " << sorted_output << std::endl;
+    std::cout << "buffered_input: " << buffered_input << std::endl;
 
     try {
         auto val = parser.get<int>("bar");  // fail: no name 'bar' was specified
@@ -84,16 +97,26 @@ Also run `./test_parse` for some testing.
 ### Interface
 
 ```C++
-    parser(int argc, char** argv);                   // constructor
+    /* Constructor. */
+    parser(int argc, char** argv);
 
-    bool parse();                                    // parse command line; return false on failure
+    /* Parse command line; return false on failure. */
+    bool parse();
 
-    void help() const;                               // print help message
+    /* Print help message. */
+    void help() const;
 
-    bool add(std::string const& name,                // add argument (if shorthand is *not* empty,
-             std::string const& descr,               // then the argument is intended to be optional);
-             std::string const& shorthand = empty);  // return false if an argument with the same name already exists
+    /* Add required argument with a name and a description.
+       Return false if an argument with the same name already exists. */
+    bool add(std::string const& name, std::string const& descr);
 
+    /* Add required argument with a name, a description and a shorthand.
+       It also specifies whether the option is boolean or not.
+       Return false if an argument with the same name already exists. */
+    bool add(std::string const& name, std::string const& descr,
+             std::string const& shorthand, bool is_boolean = true);
+
+    /* Get a variable of type T by name. */
     template <typename T>
-    T get(std::string const& name) const;            // get a variable of type T by name
+    T get(std::string const& name) const;
 ```

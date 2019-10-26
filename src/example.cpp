@@ -4,7 +4,7 @@
 
 void configure(cmd_line_parser::parser& parser) {
     // for the following two arguments, we do not specify any shorthand,
-    // thus they will be considered as *required* arguments
+    // thus they will be *required* arguments
     parser.add("perc",                // name
                "A percentage value."  // description
     );
@@ -13,9 +13,18 @@ void configure(cmd_line_parser::parser& parser) {
     // here, we specify some shorthand for *optional* arguments
     parser.add("output_filename",       // name
                "An output file name.",  // description
-               "-o"                     // shorthand
+               "-o",                    // shorthand
+               false                    // not boolean option: expected a value after the shorthand
     );
-    parser.add("num_trials", "Number of trials.", "-n");
+    parser.add("num_trials", "Number of trials.", "-n", false);
+
+    parser.add("sorted", "Sort output.", "--sort",
+               true  // boolean option: a value is not expected after the shorthand
+    );
+    parser.add("buffered", "Buffer input.", "--buffer"
+               // the option is considered boolean by default if we do not
+               // specify anything
+    );
 }
 
 int main(int argc, char** argv) {
@@ -32,9 +41,13 @@ int main(int argc, char** argv) {
     auto perc = parser.get<float>("perc");  // deduced type is float
     auto input_filename =                   // deduced type is std::string
         parser.get<std::string>("input_filename");
+    auto sorted_output = parser.get<bool>("sorted");     // deduced type is bool
+    auto buffered_input = parser.get<bool>("buffered");  // deduced type is bool
 
     std::cout << "perc: " << perc << std::endl;
     std::cout << "input_filename: " << input_filename << std::endl;
+    std::cout << "sorted_output: " << sorted_output << std::endl;
+    std::cout << "buffered_input: " << buffered_input << std::endl;
 
     try {
         auto val = parser.get<int>("bar");  // fail: no name 'bar' was specified
