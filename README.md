@@ -1,9 +1,9 @@
 Command Line Parser for C++17
 ----
 
-This is a simgle-header command line parser for C++17.
+This is a single-header command line parser for C++17.
 
-It offers, basically, the same funcionalities of other popular libraries, such as [cxxopts](https://github.com/jarro2783/cxxopts),
+It offers, basically, the same funcionalities as other popular libraries, such as [cxxopts](https://github.com/jarro2783/cxxopts),
 [cmdline](https://github.com/tanakh/cmdline) and
 [argparse](https://github.com/hbristow/argparse),
 but relies on the powerful `if  constexpr` construct of C++17 instead of dynamic casting.
@@ -90,7 +90,7 @@ Also run `./test_parse` for some testing.
 
     void help() const;                               // print help message
 
-    bool add(std::string const& name,                // add argument (if shorthand is *not* empty, 
+    bool add(std::string const& name,                // add argument (if shorthand is *not* empty,
              std::string const& descr,               // then the argument is intended to be optional);
              std::string const& shorthand = empty);  // return false if an argument with the same name already exists
 
