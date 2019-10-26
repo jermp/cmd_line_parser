@@ -23,12 +23,7 @@ struct parser {
     };
 
     bool parse() {
-        if (size_t(m_argc - 1) < m_required) {
-            std::cerr << "== error: expected " << m_required << " mandatory arguments (got only "
-                      << size_t(m_argc - 1) << ")" << std::endl;
-            return abort();
-        }
-
+        if (size_t(m_argc - 1) < m_required) return abort();
         size_t k = 0;
         for (int i = 1; i != m_argc; ++i, ++k) {
             std::string parsed(m_argv[i]);
