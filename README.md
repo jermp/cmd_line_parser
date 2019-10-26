@@ -15,7 +15,7 @@ Just add the file `include/parser.hpp` to your own project.
 
 Or if you use git:
 
-	$ git add submodule https://github.com/jermp/cmd_line_parser.git
+	$ git submodule add https://github.com/jermp/cmd_line_parser.git
 
 ### Example
 
