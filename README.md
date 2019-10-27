@@ -106,17 +106,19 @@ Also run `./test_parse` for some testing.
     /* Print help message. */
     void help() const;
 
-    /* Add required argument with a name and a description.
+    /* Add a required argument with a name and a description.
        Return false if an argument with the same name already exists. */
     bool add(std::string const& name, std::string const& descr);
 
-    /* Add required argument with a name, a description and a shorthand.
-       It also specifies whether the option is boolean or not.
+    /* Add an optional argument with a name, a description and a shorthand.
+       It also specifies whether the argument is boolean or not.
        Return false if an argument with the same name already exists. */
     bool add(std::string const& name, std::string const& descr,
              std::string const& shorthand, bool is_boolean = true);
 
-    /* Get a variable of type T by name. */
+    /* Get a variable of type T by name.
+       It throws an exception if an argument with the specified name
+       is not found. */
     template <typename T>
     T get(std::string const& name) const;
 ```
