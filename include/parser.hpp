@@ -56,18 +56,14 @@ struct parser {
     }
 
     void help() const {
-        std::cerr << "usage: " << m_argv[0] << " [-h,--help]";
+        std::cerr << "Usage: \e[1m" << m_argv[0] << "\e[0m [-h,--help]";
         auto print = [this](bool with_description) {
             for (size_t i = 0; i != m_names.size(); ++i) {
                 auto const& c = m_cmds.at(m_names[i]);
                 bool is_optional = i >= m_required;
-                if (is_optional) {
-                    std::cerr << " [" << c.shorthand;
-                    if (!c.is_boolean) std::cerr << " " << m_names[i];
-                    std::cerr << "]";
-                } else {
-                    std::cerr << " " << m_names[i];
-                }
+                if (is_optional) std::cerr << " [\e[1m" << c.shorthand << "\e[0m";
+                if (!c.is_boolean) std::cerr << " \e[4m" << m_names[i] << "\e[0m";
+                if (is_optional) std::cerr << "]";
                 if (with_description) std::cerr << "\n\t" << c.descr << "\n";
             }
         };
