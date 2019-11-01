@@ -101,10 +101,13 @@ struct parser {
             throw std::runtime_error("error: '" + name + "' not found");
         }
         auto const& value = (*it).second.value;
-        if (value == empty) {
-            std::cerr << "== warning: no value was given for '" + name + "' ==" << std::endl;
-        }
         return parse<T>(value);
+    }
+
+    bool parsed(std::string const& name) const {
+        auto it = m_cmds.find(name);
+        if (it == m_cmds.end() or (*it).second.value == empty) return false;
+        return true;
     }
 
     template <typename T>

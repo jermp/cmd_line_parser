@@ -26,7 +26,5 @@ if(UNIX)
 
 endif()
 
-include_directories(${CMD_PARSER_SOURCE_DIR}/include)
-
-add_executable(example src/example.cpp)
-add_executable(test_parse src/test_parse.cpp)
+add_executable(example example.cpp)
+add_executable(test_parse test_parse.cpp)

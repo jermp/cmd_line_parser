@@ -47,6 +47,7 @@ void configure(cmd_line_parser::parser& parser) {
                // the option is considered boolean by default if we do not
                // specify anything
     );
+    parser.add("ram", "Amount of ram to use.", "--ram", false);
 }
 
 int main(int argc, char** argv) {
@@ -66,10 +67,16 @@ int main(int argc, char** argv) {
     auto sorted_output = parser.get<bool>("sorted");     // deduced type is bool
     auto buffered_input = parser.get<bool>("buffered");  // deduced type is bool
 
+    size_t ram = 999;  // some default value
+    if (parser.parsed("ram")) {
+        ram = parser.get<size_t>("ram");  // deduced type is size_t
+    }
+
     std::cout << "perc: " << perc << std::endl;
     std::cout << "input_filename: " << input_filename << std::endl;
     std::cout << "sorted_output: " << sorted_output << std::endl;
     std::cout << "buffered_input: " << buffered_input << std::endl;
+    std::cout << "ram: " << ram << std::endl;
 
     try {
         auto val = parser.get<int>("bar");  // fail: no name 'bar' was specified
@@ -86,7 +93,9 @@ int main(int argc, char** argv) {
 
 To compile and run the example, do as follows.
 
-	$ mkdir -p build; cd build
+    $ cd src
+	$ mkdir -p build
+    $ cd build
 	$ cmake ..
 	$ make
 	$ ./example
@@ -115,6 +124,9 @@ Also run `./test_parse` for some testing.
        Return false if an argument with the same name already exists. */
     bool add(std::string const& name, std::string const& descr,
              std::string const& shorthand, bool is_boolean = true);
+
+    /* Return true is an option with the given name was parsed; false otherwise. */
+    bool parsed(std::string const& name) const;
 
     /* Get a variable of type T by name.
        It throws an exception if an argument with the specified name

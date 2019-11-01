@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cxxabi.h>
 
-#include "parser.hpp"
+#include "../include/parser.hpp"
 
 std::string demangle(std::string const& name) {
     int status = 0;
@@ -13,8 +13,7 @@ std::string demangle(std::string const& name) {
 
 template <typename T>
 void info(T val) {
-    std::cout << "value: " << val << "; type: " << demangle(typeid(val).name())
-              << std::endl;
+    std::cout << "value: " << val << "; type: " << demangle(typeid(val).name()) << std::endl;
 }
 
 template <typename T>
