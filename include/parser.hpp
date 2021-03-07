@@ -57,15 +57,15 @@ struct parser {
     }
 
     void help() const {
-        std::cerr << "Usage: \e[1m" << m_argv[0] << "\e[0m [-h,--help]";
+        std::cerr << "Usage: " << m_argv[0] << " [-h,--help]";
         auto print = [this](bool with_description) {
             for (size_t i = 0; i != m_names.size(); ++i) {
                 auto const& c = m_cmds.at(m_names[i]);
                 bool is_optional = i >= m_required;
-                if (is_optional) std::cerr << " [\e[1m" << c.shorthand << "\e[0m";
-                if (!c.is_boolean) std::cerr << " \e[4m" << m_names[i] << "\e[0m";
+                if (is_optional) std::cerr << " [" << c.shorthand;
+                if (!c.is_boolean) std::cerr << " " << m_names[i];
                 if (is_optional) std::cerr << "]";
-                if (with_description) std::cerr << "\n\t" << c.descr << "\n";
+                if (with_description) std::cerr << "\n\t" << c.descr << "\n\n";
             }
         };
         print(false);
@@ -98,9 +98,7 @@ struct parser {
     template <typename T>
     T get(std::string const& name) const {
         auto it = m_cmds.find(name);
-        if (it == m_cmds.end()) {
-            throw std::runtime_error("error: '" + name + "' not found");
-        }
+        if (it == m_cmds.end()) throw std::runtime_error("error: '" + name + "' not found");
         auto const& value = (*it).second.value;
         return parse<T>(value);
     }
@@ -140,8 +138,8 @@ struct parser {
             }
             return ret;
         }
-        assert(false);
-        __builtin_unreachable();
+        assert(false);  // should never happen
+        throw std::runtime_error("unsupported type");
     }
 
 private:
