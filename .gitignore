@@ -1,2 +1,4 @@
 /src/build
 .DS_Store
+.idea/
+[Cc]make-*/

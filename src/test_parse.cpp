@@ -1,27 +1,36 @@
 #include <iostream>
+
+#ifdef __GNUC__
+
 #include <cxxabi.h>
+
+#endif
 
 #include "../include/parser.hpp"
 
-std::string demangle(std::string const& name) {
+std::string demangle(std::string const &name) {
+#ifdef __GNUC__
     int status = 0;
-    char* tmp = abi::__cxa_demangle(name.c_str(), 0, 0, &status);
+    char *tmp = abi::__cxa_demangle(name.c_str(), 0, 0, &status);
     std::string demagled(tmp);
     free(tmp);
     return demagled;
+#else
+    return name;
+#endif
 }
 
-template <typename T>
+template<typename T>
 void info(T val) {
     std::cout << "value: " << val << "; type: " << demangle(typeid(val).name()) << std::endl;
 }
 
-template <typename T>
-void test(cmd_line_parser::parser const& parser, std::string const& value) {
+template<typename T>
+void test(cmd_line_parser::parser const &parser, std::string const &value) {
     info(parser.parse<T>(value));
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     cmd_line_parser::parser parser(argc, argv);
 
     test<char>(parser, "a");
