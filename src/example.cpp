@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
     try {
         auto val = parser.get<int>("bar");  // fail: no name 'bar' was specified
         (void)val;                          // shut up, compiler!
-    } catch (std::runtime_error e) {
+    } catch (std::runtime_error const& e) {
         std::cerr << e.what() << std::endl;
         return 1;
     }
