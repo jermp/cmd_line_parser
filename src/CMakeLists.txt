@@ -24,9 +24,8 @@ if (UNIX)
 endif ()
 
 enable_testing()
-add_executable(example ${CMAKE_CURRENT_SOURCE_DIR}/example.cpp)
-target_link_libraries(example PUBLIC CMD_LINE_PARSER)
 
+add_executable(example ${CMAKE_CURRENT_SOURCE_DIR}/example.cpp)
 add_executable(test_parse ${CMAKE_CURRENT_SOURCE_DIR}/test_parse.cpp)
 
 add_test(test_parse_CTEST ${CMAKE_BINARY_DIR}/test_parse)

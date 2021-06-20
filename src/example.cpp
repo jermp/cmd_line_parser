@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "parser.hpp"
+#include "../include/parser.hpp"
 
 void configure(cmd_line_parser::parser& parser) {
     // for the following two arguments, we do not specify any shorthand,
