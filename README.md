@@ -1,5 +1,7 @@
+[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/jermp/cmd_line_parser.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/jermp/cmd_line_parser/context:cpp)
+
 Command Line Parser for C++17
-----
+============================
 
 This is a single-header command line parser for C++17.
 
@@ -15,7 +17,7 @@ Just add the file `include/parser.hpp` to your own project.
 
 Or if you use git:
 
-	$ git submodule add https://github.com/jermp/cmd_line_parser.git
+	git submodule add https://github.com/jermp/cmd_line_parser.git
 
 ### Example
 
@@ -93,12 +95,12 @@ int main(int argc, char** argv) {
 
 To compile and run the example, do as follows.
 
-    $ cd src
-	$ mkdir -p build
-    $ cd build
-	$ cmake ..
-	$ make
-	$ ./example
+	cd src
+	mkdir -p build
+	cd build
+	cmake ..
+	make
+	./example
 
 Also run `./test_parse` for some testing.
 
