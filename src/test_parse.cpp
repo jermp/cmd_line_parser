@@ -1,9 +1,7 @@
 #include <iostream>
 
 #ifdef __GNUC__
-
 #include <cxxabi.h>
-
 #endif
 
 #include "../include/parser.hpp"

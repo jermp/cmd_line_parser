@@ -3,30 +3,26 @@
 #include "../include/parser.hpp"
 
 void configure(cmd_line_parser::parser& parser) {
-    // for the following two arguments, we do not specify any shorthand,
-    // thus they will be *required* arguments
-    parser.add("perc",                // name
-               "A percentage value."  // description
+    parser.add("perc",                 // name
+               "A percentage value.",  // description
+               "-p",                   // shorthand
+               true,                   // required argument
+               false                   // not boolean option (default is false)
     );
-    parser.add("input_filename", "An input file name.");
+    parser.add("input_filename", "An input file name.", "-i", true);
 
-    // here, we specify some shorthand for *optional* arguments
     parser.add("output_filename",       // name
                "An output file name.",  // description
                "-o",                    // shorthand
-               false                    // not boolean option: expected a value after the shorthand
-    );
-    parser.add("num_trials", "Number of trials.", "-n", false);
+               false, false);
+    parser.add("num_trials", "Number of trials.", "-n", false, false);
 
-    parser.add("sorted", "Sort output.", "--sort",
+    parser.add("sorted", "Sort output.", "--sort", false,
                true  // boolean option: a value is not expected after the shorthand
     );
-    parser.add("buffered", "Buffer input.", "--buffer"
-               // the option is considered boolean by default if we do not
-               // specify anything
-    );
+    parser.add("buffered", "Buffer input.", "--buffer", false, true);
 
-    parser.add("ram", "Amount of ram to use.", "--ram", false);
+    parser.add("ram", "Amount of ram to use.", "--ram", false, false);
 }
 
 int main(int argc, char** argv) {

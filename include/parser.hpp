@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <algorithm>
 #include <sstream>
 #include <type_traits>
@@ -20,44 +21,48 @@ struct parser {
 
     struct cmd {
         std::string shorthand, value, descr;
-        bool is_boolean;
+        bool is_required, is_boolean;
     };
 
     bool parse() {
         assert(m_argc > 0);
         if (m_argc - 1 < m_required) return abort();
 
-        for (size_t i = 1, k = 0; i != m_argc; ++i, ++k) {
+        size_t num_required = 0;
+        std::unordered_set<std::string> parsed_shorthands;
+        parsed_shorthands.reserve(m_argc);
+
+        for (size_t i = 1; i != m_argc; ++i) {
             std::string parsed(m_argv[i]);
-            if (parsed == "-h" || parsed == "--help") {
+            if (parsed == "-h" || parsed == "--help") return abort();
+            size_t id = 0;
+            if (const auto it = m_shorthands.find(parsed); it == m_shorthands.end()) {
+                std::cerr << "== error: shorthand '" + parsed + "' not found" << std::endl;
                 return abort();
-            }
-            size_t id = k;
-            bool is_optional = id >= m_required;
-            if (is_optional) {
-                if (const auto it = m_shorthands.find(parsed); it == m_shorthands.end()) {
-                    std::cerr << "== error: shorthand '" + parsed + "' not found" << std::endl;
+            } else {
+                if (const auto it = parsed_shorthands.find(parsed); it != parsed_shorthands.end()) {
+                    std::cerr << "== error: shorthand '" + parsed + "' already parsed" << std::endl;
                     return abort();
-                } else {
-                    id = (*it).second;
                 }
+                parsed_shorthands.emplace(parsed);
+                id = (*it).second;
             }
             assert(id < m_names.size());
             auto const& name = m_names[id];
-            auto& c = m_cmds[name];
-            if (is_optional) {
-                if (c.is_boolean) {
-                    parsed = "true";
-                } else {
-                    ++i;
-                    if (i == m_argc) {
-                        return abort();
-                    }
-                    parsed = m_argv[i];
-                }
+            auto& cmd = m_cmds[name];
+            if (cmd.is_required) num_required += 1;
+            if (cmd.is_boolean) {
+                parsed = "true";
+            } else {
+                ++i;
+                if (i == m_argc) { return abort(); }
+                parsed = m_argv[i];
             }
-            c.value = parsed;
+            cmd.value = parsed;
         }
+
+        if (num_required != m_required) return abort();
+
         return true;
     }
 
@@ -65,12 +70,14 @@ struct parser {
         std::cerr << "Usage: " << m_argv[0] << " [-h,--help]";
         const auto print = [this](bool with_description) {
             for (size_t i = 0; i != m_names.size(); ++i) {
-                auto const& c = m_cmds.at(m_names[i]);
-                bool is_optional = i >= m_required;
-                if (is_optional) std::cerr << " [" << c.shorthand;
-                if (!c.is_boolean) std::cerr << " " << m_names[i];
-                if (is_optional) std::cerr << "]";
-                if (with_description) std::cerr << "\n\t" << c.descr << "\n\n";
+                auto const& cmd = m_cmds.at(m_names[i]);
+                std::cerr << " [" << cmd.shorthand;
+                if (!cmd.is_boolean) std::cerr << " " << m_names[i];
+                std::cerr << "]";
+                if (with_description) {
+                    std::cerr << "\n\t" << (cmd.is_required ? "REQUIRED: " : "") << cmd.descr
+                              << "\n\n";
+                }
             }
         };
         print(false);
@@ -79,21 +86,14 @@ struct parser {
         std::cerr << " [-h,--help]\n\tPrint this help text and silently exits." << std::endl;
     }
 
-    bool add(std::string const& name, std::string const& descr) {
-        bool ret = m_cmds.emplace(name, cmd{empty, empty, descr, false}).second;
-        if (ret) {
-            m_names.push_back(name);
-            m_required += 1;
-        }
-        return ret;
-    }
-
     bool add(std::string const& name, std::string const& descr, std::string const& shorthand,
-             bool is_boolean = true) {
-        bool ret =
-            m_cmds.emplace(name, cmd{shorthand, is_boolean ? "false" : empty, descr, is_boolean})
-                .second;
+             bool is_required, bool is_boolean = false) {
+        bool ret = m_cmds
+                       .emplace(name, cmd{shorthand, is_boolean ? "false" : empty, descr,
+                                          is_required, is_boolean})
+                       .second;
         if (ret) {
+            if (is_required) m_required += 1;
             m_names.push_back(name);
             m_shorthands.emplace(shorthand, m_names.size() - 1);
         }

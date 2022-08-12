@@ -24,32 +24,29 @@ Or if you use git:
 ```C++
 #include <iostream>
 
-#include "parser.hpp"
+#include "../include/parser.hpp"
 
 void configure(cmd_line_parser::parser& parser) {
-    // for the following two arguments, we do not specify any shorthand,
-    // thus they will be *required* arguments
-    parser.add("perc",                // name
-               "A percentage value."  // description
+    parser.add("perc",                 // name
+               "A percentage value.",  // description
+               "-p",                   // shorthand
+               true,                   // required argument
+               false                   // not boolean option (default is false)
     );
-    parser.add("input_filename", "An input file name.");
+    parser.add("input_filename", "An input file name.", "-i", true);
 
-    // here, we specify some shorthand for *optional* arguments
     parser.add("output_filename",       // name
                "An output file name.",  // description
                "-o",                    // shorthand
-               false                    // not boolean option: expected a value after the shorthand
-    );
-    parser.add("num_trials", "Number of trials.", "-n", false);
+               false, false);
+    parser.add("num_trials", "Number of trials.", "-n", false, false);
 
-    parser.add("sorted", "Sort output.", "--sort",
+    parser.add("sorted", "Sort output.", "--sort", false,
                true  // boolean option: a value is not expected after the shorthand
     );
-    parser.add("buffered", "Buffer input.", "--buffer"
-               // the option is considered boolean by default if we do not
-               // specify anything
-    );
-    parser.add("ram", "Amount of ram to use.", "--ram", false);
+    parser.add("buffered", "Buffer input.", "--buffer", false, true);
+
+    parser.add("ram", "Amount of ram to use.", "--ram", false, false);
 }
 
 int main(int argc, char** argv) {
@@ -83,14 +80,12 @@ int main(int argc, char** argv) {
     try {
         auto val = parser.get<int>("bar");  // fail: no name 'bar' was specified
         (void)val;                          // shut up, compiler!
-    } catch (std::runtime_error e) {
+    } catch (std::runtime_error const& e) {
         std::cerr << e.what() << std::endl;
         return 1;
     }
-
     return 0;
 }
-
 ```
 
 To compile and run the example, do as follows.
@@ -108,31 +103,30 @@ Also run `./test_parse` for some testing.
 ### Interface
 
 ```C++
-    /* Constructor. */
-    parser(int argc, char** argv);
+/* Constructor. */
+parser(int argc, char** argv);
 
-    /* Parse command line; return false on failure. */
-    bool parse();
+/* Parse command line; return false on failure. */
+bool parse();
 
-    /* Print help message. */
-    void help() const;
+/* Print help message. */
+void help() const;
 
-    /* Add a required argument with a name and a description.
-       Return false if an argument with the same name already exists. */
-    bool add(std::string const& name, std::string const& descr);
+/* Add an argument with a name, a description, and a shorthand.
+   Return false if an argument with the same name already exists.
+   The last two boolean parameters are used to specify if the argument
+   is to be required and to be considered a boolean argument (no value after
+   the shorthand). */
+ bool add(std::string const& name, std::string const& descr,
+          std::string const& shorthand,
+          bool is_required, bool is_boolean = false);
 
-    /* Add an optional argument with a name, a description and a shorthand.
-       It also specifies whether the argument is boolean or not.
-       Return false if an argument with the same name already exists. */
-    bool add(std::string const& name, std::string const& descr,
-             std::string const& shorthand, bool is_boolean = true);
+/* Return true is an option with the given name was parsed; false otherwise. */
+bool parsed(std::string const& name) const;
 
-    /* Return true is an option with the given name was parsed; false otherwise. */
-    bool parsed(std::string const& name) const;
-
-    /* Get a variable of type T by name.
-       It throws an exception if an argument with the specified name
-       is not found. */
-    template <typename T>
-    T get(std::string const& name) const;
+/* Get a variable of type T by name.
+   It throws an exception if an argument with the specified name
+   is not found. */
+template <typename T>
+T get(std::string const& name) const;
 ```
