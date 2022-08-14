@@ -12,8 +12,6 @@
 namespace cmd_line_parser {
 
 struct parser {
-    inline static const std::string empty;
-
     parser(int argc, char** argv)
         : m_argc(argc)
         , m_argv(argv)
@@ -28,14 +26,14 @@ struct parser {
         assert(m_argc > 0);
         if (m_argc - 1 < m_required) return abort();
 
-        size_t num_required = 0;
+        int num_required = 0;
         std::unordered_set<std::string> parsed_shorthands;
         parsed_shorthands.reserve(m_argc);
 
-        for (size_t i = 1; i != m_argc; ++i) {
+        for (int i = 1; i != m_argc; ++i) {
             std::string parsed(m_argv[i]);
             if (parsed == "-h" || parsed == "--help") return abort();
-            size_t id = 0;
+            int id = 0;
             if (const auto it = m_shorthands.find(parsed); it == m_shorthands.end()) {
                 std::cerr << "== error: shorthand '" + parsed + "' not found" << std::endl;
                 return abort();
@@ -47,7 +45,7 @@ struct parser {
                 parsed_shorthands.emplace(parsed);
                 id = (*it).second;
             }
-            assert(id < m_names.size());
+            assert(static_cast<size_t>(id) < m_names.size());
             auto const& name = m_names[id];
             auto& cmd = m_cmds[name];
             if (cmd.is_required) num_required += 1;
@@ -89,8 +87,8 @@ struct parser {
     bool add(std::string const& name, std::string const& descr, std::string const& shorthand,
              bool is_required, bool is_boolean = false) {
         bool ret = m_cmds
-                       .emplace(name, cmd{shorthand, is_boolean ? "false" : empty, descr,
-                                          is_required, is_boolean})
+                       .emplace(name, cmd{shorthand, is_boolean ? "false" : "", descr, is_required,
+                                          is_boolean})
                        .second;
         if (ret) {
             if (is_required) m_required += 1;
@@ -110,7 +108,7 @@ struct parser {
 
     bool parsed(std::string const& name) const {
         auto it = m_cmds.find(name);
-        if (it == m_cmds.end() || (*it).second.value == empty) return false;
+        if (it == m_cmds.end() || (*it).second.value == "") return false;
         return true;
     }
 
@@ -148,9 +146,9 @@ struct parser {
     }
 
 private:
-    size_t m_argc;
+    int m_argc;
     char** m_argv;
-    size_t m_required;
+    int m_required;
     std::unordered_map<std::string, cmd> m_cmds;
     std::unordered_map<std::string, int> m_shorthands;
     std::vector<std::string> m_names;
