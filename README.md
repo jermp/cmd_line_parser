@@ -1,4 +1,4 @@
-[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/jermp/cmd_line_parser.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/jermp/cmd_line_parser/context:cpp)
+[![CodeQL](https://github.com/jermp/cmd_line_parser/actions/workflows/codeql.yml/badge.svg)](https://github.com/jermp/cmd_line_parser/actions/workflows/codeql.yml)
 
 Command Line Parser for C++17
 ============================
