@@ -1,5 +1,4 @@
 [![CodeQL](https://github.com/jermp/cmd_line_parser/actions/workflows/codeql.yml/badge.svg)](https://github.com/jermp/cmd_line_parser/actions/workflows/codeql.yml)
-[![Build Cpp By CMake](https://github.com/jermp/cmd_line_parser/actions/workflows/c_cpp_build.yml/badge.svg)](https://github.com/jermp/cmd_line_parser/actions/workflows/c_cpp_build.yml)
 
 Command Line Parser for C++17
 ============================
