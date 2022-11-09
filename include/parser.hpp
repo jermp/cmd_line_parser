@@ -32,7 +32,7 @@ struct parser {
 
         for (int i = 1; i != m_argc; ++i) {
             std::string parsed(m_argv[i]);
-            if (parsed == "-h" or parsed == "--help") return abort();
+            if (parsed == "-h" || parsed == "--help") return abort();
             int id = 0;
             if (const auto it = m_shorthands.find(parsed); it == m_shorthands.end()) {
                 std::cerr << "== error: shorthand '" + parsed + "' not found" << std::endl;
@@ -140,7 +140,7 @@ struct parser {
         } else if constexpr (std::is_same<T, bool>::value) {
             std::istringstream stream(value);
             bool ret;
-            if (value == "true" or value == "false") {
+            if (value == "true" || value == "false") {
                 stream >> std::boolalpha >> ret;
             } else {
                 stream >> std::noboolalpha >> ret;
