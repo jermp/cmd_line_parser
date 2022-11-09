@@ -36,11 +36,10 @@ int main(int argc, char** argv) {
     if (!success) return 1;
 
     // now get some variables
-    auto perc = parser.get<float>("perc");  // deduced type is float
-    auto input_filename =                   // deduced type is std::string
-        parser.get<std::string>("input_filename");
-    auto sorted_output = parser.get<bool>("sorted");     // deduced type is bool
-    auto buffered_input = parser.get<bool>("buffered");  // deduced type is bool
+    auto perc = parser.get<float>("perc");                            // deduced type is float
+    auto input_filename = parser.get<std::string>("input_filename");  // deduced type is std::string
+    auto sorted_output = parser.get<bool>("sorted");                  // deduced type is bool
+    auto buffered_input = parser.get<bool>("buffered");               // deduced type is bool
 
     size_t ram = 999;  // some default value
     if (parser.parsed("ram")) {

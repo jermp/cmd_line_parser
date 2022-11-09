@@ -32,7 +32,7 @@ struct parser {
 
         for (int i = 1; i != m_argc; ++i) {
             std::string parsed(m_argv[i]);
-            if (parsed == "-h" || parsed == "--help") return abort();
+            if (parsed == "-h" or parsed == "--help") return abort();
             int id = 0;
             if (const auto it = m_shorthands.find(parsed); it == m_shorthands.end()) {
                 std::cerr << "== error: shorthand '" + parsed + "' not found" << std::endl;
@@ -108,8 +108,14 @@ struct parser {
 
     bool parsed(std::string const& name) const {
         auto it = m_cmds.find(name);
-        if (it == m_cmds.end() || (*it).second.value == "") return false;
-        return true;
+        if (it == m_cmds.end()) return false;
+        auto const& cmd = (*it).second;
+        if (cmd.is_boolean) {
+            if (cmd.value == "true") return true;
+            if (cmd.value == "false") return false;
+            assert(false);  // should never happen
+        }
+        return cmd.value != "";
     }
 
     template <typename T>
@@ -134,7 +140,7 @@ struct parser {
         } else if constexpr (std::is_same<T, bool>::value) {
             std::istringstream stream(value);
             bool ret;
-            if (value == "true" || value == "false") {
+            if (value == "true" or value == "false") {
                 stream >> std::boolalpha >> ret;
             } else {
                 stream >> std::noboolalpha >> ret;
