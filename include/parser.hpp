@@ -125,15 +125,17 @@ struct parser {
         } else if constexpr (std::is_same<T, char>::value || std::is_same<T, signed char>::value ||
                              std::is_same<T, unsigned char>::value) {
             return value.front();
-        } else if constexpr (std::is_same<T, unsigned int>::value || std::is_same<T, int>::value ||
-                             std::is_same<T, unsigned short int>::value ||
-                             std::is_same<T, short int>::value) {
+        } else if constexpr (std::is_same<T, int>::value || std::is_same<T, short int>::value) {
             return std::strtol(value.c_str(), nullptr, 10);
-        } else if constexpr (std::is_same<T, unsigned long int>::value ||
-                             std::is_same<T, long int>::value ||
-                             std::is_same<T, unsigned long long int>::value ||
+        } else if constexpr (std::is_same<T, unsigned int>::value ||
+                             std::is_same<T, unsigned short int>::value) {
+            return std::strtoul(value.c_str(), nullptr, 10);
+        } else if constexpr (std::is_same<T, long int>::value ||
                              std::is_same<T, long long int>::value) {
             return std::strtoll(value.c_str(), nullptr, 10);
+        } else if constexpr (std::is_same<T, unsigned long int>::value ||
+                             std::is_same<T, unsigned long long int>::value) {
+            return std::strtoull(value.c_str(), nullptr, 10);
         } else if constexpr (std::is_same<T, float>::value || std::is_same<T, double>::value ||
                              std::is_same<T, long double>::value) {
             return std::strtod(value.c_str(), nullptr);
